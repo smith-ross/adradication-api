@@ -1,7 +1,8 @@
 import express from "express";
-import mongoose from "mongoose";
 import routes from "./routes/route-map";
 import { connect } from "./db/controller";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const PORT = 3000;
@@ -10,8 +11,8 @@ const PORT = 3000;
 connect();
 
 app.use(express.json());
-Object.entries(routes).forEach((url, router) => {
-  app.use(router, url);
+Object.entries(routes).forEach(([url, router]) => {
+  app.use(url, router);
 });
 
 app.get("/", (req, res) => {

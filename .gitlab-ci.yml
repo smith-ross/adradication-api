@@ -1,0 +1,17 @@
+image: node:20
+
+stages: # List of stages for jobs, and their order of execution
+  - install
+
+install-job:
+  stage: install
+  script:
+    - echo "Installing..."
+    - npm install
+  artifacts:
+    name: "artifacts"
+    untracked: true
+    expire_in: 30 mins
+    paths:
+      - .npm/
+      - node_modules/
