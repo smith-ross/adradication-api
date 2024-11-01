@@ -1,5 +1,6 @@
 import express from "express";
 import routes from "./routes/route-map";
+import cors from "cors";
 import { connect } from "./db/controller";
 import dotenv from "dotenv";
 dotenv.config();
@@ -11,6 +12,7 @@ const PORT = 3000;
 connect();
 
 app.use(express.json());
+app.use(cors());
 Object.entries(routes).forEach(([url, router]) => {
   app.use(url, router);
 });

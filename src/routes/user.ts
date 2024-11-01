@@ -24,6 +24,7 @@ UserRouter.post("/register", async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: "User Registered" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
