@@ -8,9 +8,9 @@ const UserRouter = Router();
 
 UserRouter.post("/register", async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email });
+    const existingUser = await User.findOne({ username: req.body.username });
     if (existingUser) {
-      return res.status(400).json({ error: "Email Already Exists" });
+      return res.status(400).json({ error: "Username already exists..." });
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -22,7 +22,7 @@ UserRouter.post("/register", async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: "User Registered" });
+    res.status(201).json({ message: "Registration successful!" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -31,9 +31,11 @@ UserRouter.post("/register", async (req, res) => {
 
 UserRouter.post("/login", async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ username: req.body.username });
     if (!user) {
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({
+        error: "Invalid credentials, ensure your username/password match",
+      });
     }
 
     const passwordMatch = await bcrypt.compare(
@@ -41,11 +43,13 @@ UserRouter.post("/login", async (req, res) => {
       user.password
     );
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({
+        error: "Invalid credentials, ensure your username/password match",
+      });
     }
 
-    const token = jwt.sign({ email: user.email }, "secret");
-    res.status(200).json({ token });
+    const token = jwt.sign({ username: user.username }, "secret");
+    res.status(200).json({ token: token });
   } catch (_) {
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -53,7 +57,8 @@ UserRouter.post("/login", async (req, res) => {
 
 UserRouter.get("/currentUser", verifyAuthToken, async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.user.email });
+    console.log(req.user);
+    const user = await User.findOne({ username: req.user.username });
     if (!user) {
       return res.status(404).json({ error: "User Not Found" });
     }
