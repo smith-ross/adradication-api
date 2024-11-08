@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 
 export const battleResultSchema = new mongoose.Schema({
-  username: String,
-  url: String,
+  key: String,
   result: {
     type: String,
     enum: ["win", "lose", "flee"],
