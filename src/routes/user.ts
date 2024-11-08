@@ -8,9 +8,20 @@ const UserRouter = Router();
 
 UserRouter.post("/register", async (req, res) => {
   try {
+    if (!req.body.email.includes("@") || !req.body.email.includes(".")) {
+      return res.status(400).json({ error: "Invalid email." });
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(req.body.password)) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Password must contain at least 6 characters, one letter, and one number.",
+        });
+    }
     const existingUser = await User.findOne({ username: req.body.username });
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists..." });
+      return res.status(400).json({ error: "Username already exists." });
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -57,7 +68,6 @@ UserRouter.post("/login", async (req, res) => {
 
 UserRouter.get("/currentUser", verifyAuthToken, async (req, res) => {
   try {
-    console.log(req.user);
     const user = await User.findOne({ username: req.user.username });
     if (!user) {
       return res.status(404).json({ error: "User Not Found" });
