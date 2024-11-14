@@ -1,7 +1,7 @@
 import UserRouter from "./user";
 import { Router } from "express";
 import BattleRouter from "./battle";
-import TrackListRouter from "./tracklist";
+import TrackListRouter from "./trackers";
 
 const routes: { [key: string]: [route: Router] } = {
   "/auth": UserRouter,

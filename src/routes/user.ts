@@ -12,12 +12,10 @@ UserRouter.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Invalid email." });
     }
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(req.body.password)) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Password must contain at least 6 characters, one letter, and one number.",
-        });
+      return res.status(400).json({
+        error:
+          "Password must contain at least 6 characters, one letter, and one number.",
+      });
     }
     const existingUser = await User.findOne({ username: req.body.username });
     if (existingUser) {
@@ -25,10 +23,11 @@ UserRouter.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedEmail = await bcrypt.hash(req.body.email, 10);
 
     const newUser = new User({
       username: req.body.username,
-      email: req.body.email,
+      email: hashedEmail,
       password: hashedPassword,
     });
 
@@ -72,7 +71,7 @@ UserRouter.get("/currentUser", verifyAuthToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User Not Found" });
     }
-    res.status(200).json({ username: user.username, email: user.email });
+    res.status(200).json({ username: user.username });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
