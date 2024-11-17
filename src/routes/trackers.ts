@@ -3,29 +3,32 @@ import fs from "fs";
 
 const TrackListRouter = Router();
 
-let trackerList = [
-  "doubleclick.net",
-  "google-analytics.com",
-  "ads.yahoo.com",
-  "pixel",
-  "track",
-  "adservice.google",
-  "adroll",
-];
+let trackerHash: { [url: string]: boolean } = {
+  ["doubleclick.net"]: true,
+  ["google-analytics.com"]: true,
+  ["ads.yahoo.com"]: true,
+  ["pixel"]: true,
+  ["track"]: true,
+  ["adservice.google"]: true,
+  ["adroll"]: true,
+};
 
 const retrieveTrackers = () => {
   fetch(
-    "https://raw.githubusercontent.com/blocklistproject/Lists/refs/heads/master/tracking.txt"
+    "https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt"
   )
     .then((response) => {
       response.text().then((text) => {
-        trackerList = text
+        text
           .split("\n")
           .filter((line) => !line.includes("#") && line !== "")
-          .map((line) => line.slice(line.indexOf(" ") + 1));
+          .forEach((line) => {
+            const trimmed = line.slice(line.indexOf(" ") + 1);
+            trackerHash[trimmed.replace(/ww([w(0-9)]*)\./, "")] = true;
+          });
         fs.writeFile(
           "out/trackers.json",
-          JSON.stringify(trackerList),
+          JSON.stringify(trackerHash),
           () => {}
         );
         console.log("Retrieved tracker list");
@@ -44,12 +47,12 @@ fs.readFile("out/trackers.json", "utf-8", (err, fileContent) => {
     retrieveTrackers();
     return;
   }
-  trackerList = JSON.parse(fileContent);
+  trackerHash = JSON.parse(fileContent);
   console.log("Loaded existing trackers");
 });
 
 TrackListRouter.get("/trackerList", async (req, res) => {
-  res.status(200).json(trackerList);
+  res.status(200).json(trackerHash);
 });
 
 export default TrackListRouter;

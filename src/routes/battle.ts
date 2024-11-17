@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { Router } from "express";
 import { BattleResult } from "../db/models/BattleResultModel";
 import { verifyAuthToken } from "../util/auth";
@@ -21,7 +20,7 @@ BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
       username: req.user.username,
       url: req.body.url,
       result: req.body.result,
-      points: req.body.points || 0,
+      points: req.body.score || 0,
     });
 
     await newBattle.save();
@@ -32,14 +31,14 @@ BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
   }
 });
 
-BattleRouter.get("/getBattleResult", verifyAuthToken, async (req, res) => {
+BattleRouter.post("/getBattleResult", verifyAuthToken, async (req, res) => {
   try {
     const existingBattle = await BattleResult.findOne({
       username: req.user.username,
       url: req.body.url,
     });
     if (!existingBattle) {
-      return res.status(404).json({ error: "Battle Not Found" });
+      return res.status(200).json({ result: "not_played" });
     }
     res.status(200).json({
       result: existingBattle.result,
