@@ -10,7 +10,7 @@ export const verifyAuthToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    req.user = decoded;
+    req.body.user = decoded;
     next();
   });
 };

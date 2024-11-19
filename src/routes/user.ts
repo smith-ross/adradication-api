@@ -67,7 +67,7 @@ UserRouter.post("/login", async (req, res) => {
 
 UserRouter.get("/currentUser", verifyAuthToken, async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
+    const user = await User.findOne({ username: req.body.user.username });
     if (!user) {
       return res.status(404).json({ error: "User Not Found" });
     }
