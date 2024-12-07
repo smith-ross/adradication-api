@@ -11,7 +11,11 @@ UserRouter.post("/register", async (req, res) => {
     if (!req.body.email.includes("@") || !req.body.email.includes(".")) {
       return res.status(400).json({ error: "Invalid email." });
     }
-    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(req.body.password)) {
+    // /[(.*[A-Za-z]+.*\d+.*)(.*\d+.*[A-Za-z]+.*)]/
+    if (
+      !/(.*[A-Za-z]+.*\d+.*)|(.*\d+.*[A-Za-z]+.*)/.test(req.body.password) ||
+      req.body.password.length < 6
+    ) {
       return res.status(400).json({
         error:
           "Password must contain at least 6 characters, one letter, and one number.",
