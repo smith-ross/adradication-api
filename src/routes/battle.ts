@@ -58,6 +58,43 @@ BattleRouter.get("/highScore", verifyAuthToken, async (req, res) => {
   }
 });
 
+BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
+  try {
+    const summation = await BattleResult.aggregate([
+      {
+        $group: {
+          _id: "$username",
+          totalScore: { $sum: "$points" },
+        },
+      },
+      {
+        $sort: { totalScore: -1 },
+      },
+    ]);
+
+    const playerScore = summation.filter(
+      (entry) => entry._id === req.body.user.username
+    )[0];
+    const playerIndex = summation.indexOf(playerScore);
+
+    return res.status(200).json({
+      playerPosition: { index: playerIndex, score: playerScore.totalScore },
+      nextPosition:
+        playerIndex > 0
+          ? { index: playerIndex + 1, score: summation[playerIndex + 1] }
+          : undefined,
+      leaderboard: summation
+        .slice(0, Number(req.query.amount) || 50)
+        .map((entry) => ({
+          username: entry._id,
+          score: entry.totalScore,
+        })),
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 BattleRouter.post("/getBattleResult", verifyAuthToken, async (req, res) => {
   try {
     const existingBattles = await BattleResult.find({
