@@ -78,10 +78,26 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
     const playerIndex = summation.indexOf(playerScore);
 
     return res.status(200).json({
-      playerPosition: { index: playerIndex, score: playerScore.totalScore },
+      playerPosition: {
+        index: playerIndex,
+        username: playerScore._id,
+        score: playerScore.totalScore,
+      },
       nextPosition:
         playerIndex > 0
-          ? { index: playerIndex + 1, score: summation[playerIndex + 1] }
+          ? {
+              index: playerIndex - 1,
+              username: summation[playerIndex - 1]._id,
+              score: summation[playerIndex - 1].totalScore,
+            }
+          : undefined,
+      prevPosition:
+        playerIndex < summation.length - 1
+          ? {
+              index: playerIndex + 1,
+              username: summation[playerIndex + 1]._id,
+              score: summation[playerIndex + 1].totalScore,
+            }
           : undefined,
       leaderboard: summation
         .slice(0, Number(req.query.amount) || 50)
@@ -91,6 +107,7 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
         })),
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
