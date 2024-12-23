@@ -62,6 +62,9 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
   try {
     const summation = await BattleResult.aggregate([
       {
+        $match: { result: "win" },
+      },
+      {
         $group: {
           _id: "$username",
           totalScore: { $sum: "$points" },
