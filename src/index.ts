@@ -12,7 +12,12 @@ const PORT = 3000;
 connect();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 Object.entries(routes).forEach(([url, router]) => {
   app.use(url, router);
 });
