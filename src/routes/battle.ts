@@ -8,10 +8,15 @@ const POINT_LIMIT = 200;
 const BattleRouter = Router();
 
 BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
-  const hashedUrl = await bcrypt.hash(req.body.url, 10);
+  const hashedUrl = await bcrypt.hash(req.body.url, 4);
   try {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
     const existingBattles = await BattleResult.find({
       username: req.body.user.username,
+      date: { $gte: start, $lt: end },
     });
     let existingBattle: { [key: string]: any };
     for (let battle of existingBattles) {
@@ -117,8 +122,13 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
 
 BattleRouter.post("/getBattleResult", verifyAuthToken, async (req, res) => {
   try {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
     const existingBattles = await BattleResult.find({
       username: req.body.user.username,
+      date: { $gte: start, $lt: end },
     });
     let existingBattle: { [key: string]: any };
     for (let battle of existingBattles) {
