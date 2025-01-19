@@ -88,8 +88,8 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
     return res.status(200).json({
       playerPosition: {
         index: playerIndex,
-        username: playerScore._id,
-        score: playerScore.totalScore,
+        username: playerScore ? playerScore._id : req.body.user.username,
+        score: playerScore ? playerScore.totalScore : 0,
       },
       nextPosition:
         playerIndex > 0
