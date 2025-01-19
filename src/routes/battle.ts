@@ -33,7 +33,9 @@ BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
       url: hashedUrl,
       result: req.body.result,
       points: req.body.score || 0,
-      defeatedBy: req.body.defeatedBy,
+      defeatedBy: req.body.defeatedBy || "",
+      upgrades: req.body.upgrades || [],
+      mostCommonTracker: req.body.mostCommonTracker || "",
     });
 
     await newBattle.save();

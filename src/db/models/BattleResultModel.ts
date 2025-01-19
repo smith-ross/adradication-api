@@ -13,6 +13,8 @@ export const battleResultSchema = new mongoose.Schema({
     min: 0,
   },
   defeatedBy: String,
+  upgrades: [String],
+  mostCommonTracker: String,
 });
 
 export const BattleResult = mongoose.model("BattleResult", battleResultSchema);
