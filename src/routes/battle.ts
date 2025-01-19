@@ -83,7 +83,7 @@ BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
     const playerScore = summation.filter(
       (entry) => entry._id === req.body.user.username
     )[0];
-    const playerIndex = summation.indexOf(playerScore);
+    const playerIndex = playerScore ? summation.indexOf(playerScore) : 0;
 
     return res.status(200).json({
       playerPosition: {
