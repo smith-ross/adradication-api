@@ -12,6 +12,7 @@ export const battleResultSchema = new mongoose.Schema({
     type: Number,
     min: 0,
   },
+  defeatedBy: String,
 });
 
 export const BattleResult = mongoose.model("BattleResult", battleResultSchema);
