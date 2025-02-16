@@ -3,8 +3,6 @@ import { BattleResult } from "../db/models/BattleResultModel";
 import { verifyAuthToken } from "../util/auth";
 import bcrypt from "bcryptjs";
 
-const POINT_LIMIT = 200;
-
 const BattleRouter = Router();
 
 BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
@@ -25,7 +23,7 @@ BattleRouter.post("/reportResult", verifyAuthToken, async (req, res) => {
         break;
       }
     }
-    if (existingBattle || (req.body.points && req.body.points > POINT_LIMIT)) {
+    if (existingBattle) {
       return res.status(400).json({ error: "Invalid BattleResult." });
     }
     const newBattle = new BattleResult({
@@ -69,9 +67,6 @@ BattleRouter.get("/highScore", verifyAuthToken, async (req, res) => {
 BattleRouter.get("/leaderboard", verifyAuthToken, async (req, res) => {
   try {
     const summation = await BattleResult.aggregate([
-      {
-        $match: { result: "win" },
-      },
       {
         $group: {
           _id: "$username",
@@ -146,6 +141,7 @@ BattleRouter.post("/getBattleResult", verifyAuthToken, async (req, res) => {
     res.status(200).json({
       result: existingBattle.result,
       points: existingBattle.points,
+      mostCommonTracker: existingBattle.mostCommonTracker,
       date: existingBattle.date,
     });
   } catch (error) {
