@@ -4,7 +4,7 @@
 
 ### Client-Side
 
-You can find the corresponding client-side repository [here!](https://stgit.dcs.gla.ac.uk/2652064s/adradication)
+You can find the corresponding client-side repository [here!](https://github.com/smith-ross/adradication)
 
 #### Set Up
 
